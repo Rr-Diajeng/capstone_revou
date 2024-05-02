@@ -198,12 +198,14 @@ order by cancellation_percentage desc;
  where arrival_date_year = 2015 and arrival_date_month = "August";
 
 
+-- total check out berdasarkan adults children dan babies di tahun 2015
 select sum(adults) as adults, sum(children)as children, sum(babies) as babies
 from hotel_bookings hb
 where reservation_status  = 'Check-Out' and arrival_date_year = 2015;
 
 -- result: adults = 24,726; children = 1,036; babies = 182
 
+-- total adr tahun 2015 berdasarkan checkout
 select sum(adr)as total_revenue
 from hotel_bookings hb
 where reservation_status  = 'Check-Out' and arrival_date_year = 2015;
@@ -369,6 +371,7 @@ order by hb.days_in_waiting_list desc;
 -- Transient-Party	DEU	223	Check-Out
 
 
+
 ----------------------------------------------- full 2017
 
 ----- di bulan berapa, yang banyak dipesan di bulan apa (yang checkout)
@@ -386,5 +389,45 @@ from hotel_bookings hb
 where hotel = "Resort Hotel" and reservation_status = "Check-Out" and arrival_date_year = 2017
 and arrival_date_month = "April";
 
+-------- berapa banyak guest yg repeated guests (lihat kondisi seperti meal, market, waiting list)
+
+select meal, market_segment, days_in_waiting_list,customer_type, country, count(*) as jumlah_repeated
+from hotel_bookings hb 
+where is_repeated_guest = 1
+group by meal, market_segment, days_in_waiting_list, customer_type, country
+order by jumlah_repeated desc;
+
+select count(*) as jumlah_repeated
+from hotel_bookings hb 
+where is_repeated_guest = 1;
+
+-- 3810
+
+--- jumlah customer dalam 3 tahun
+
+select count(*)
+from hotel_bookings hb 
+where is_canceled = 0;
+
+-- 75166
+
+select count(*) as jumlah_repeated
+from hotel_bookings hb 
+where is_repeated_guest = 1 and arrival_date_year = 2015;
+
+-- 641
+
+select count(*) as jumlah_repeated
+from hotel_bookings hb 
+where is_repeated_guest = 1 and arrival_date_year = 2016;
+
+-- 1778
+
+select count(*) as jumlah_repeated
+from hotel_bookings hb 
+where is_repeated_guest = 1 and arrival_date_year = 2017;
+
+-- 1391
 
 
+-- 24942
