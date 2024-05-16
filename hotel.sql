@@ -433,11 +433,258 @@ where is_repeated_guest = 1 and arrival_date_year = 2017;
 -- 24942
 
 
+--- What market segments are frequently used by guests to book hotel room
+
+select hb.distribution_channel, hb.customer_type, market_segment, count(*) as jumlah
+from hotel_bookings hb
+group by market_segment, hb.customer_type, hb.distribution_channel
+order by jumlah desc;
+
+-- TA/TO	Transient	Online TA	50995
+
+-- TA/TO = cara delivery barang. TO = transfer out. bagaimana cara barang itu keluar.
+-- TA = Travel Agent
+-- direct = COD
+
+select distinct (hb.reservation_status) 
+from hotel_bookings hb;
+
+
+--- saran kak bobbby
+
+--- sisi adr: kita tau bb paling laku, kiita coba promo2. yang pesan bb itu kebanyakan weekend atau weekday
+--- di bulan apa yg trennya naik
+
+select distinct (hb.days_in_waiting_list)
+from hotel_bookings hb 
+
+
+--------------------------------------------------------------------------- zona suci
+
+-- menyesuaikan tabel
+
+
+select hb.arrival_date_day_of_month, hb.arrival_date_month, hb.arrival_date_year, hb.arrival_date_week_number
+from hotel_bookings hb;
+
+SELECT 
+	CONCAT(
+        LPAD(hb.arrival_date_day_of_month, 2, '0'), '-', 
+        hb.arrival_date_month, '-',
+        RIGHT(hb.arrival_date_year, 2)
+    ) AS date_of_arrival,
+    hb.arrival_date_week_number as minggu_ke,
+    hb.stays_in_weekend_nights,
+    hb.stays_in_week_nights,
+    hb.reservation_status_date,
+    hb.lead_time,
+    DATE_SUB(
+        STR_TO_DATE(
+            CONCAT(
+                hb.arrival_date_year, '-', 
+                hb.arrival_date_month, '-', 
+                LPAD(hb.arrival_date_day_of_month, 2, '0')
+            ), 
+            '%Y-%M-%d'
+        ), 
+        INTERVAL hb.lead_time DAY
+    ) AS booking_date
+FROM 
+    hotel_bookings hb
+where hb.stays_in_weekend_nights = 0 and hb.stays_in_week_nights = 0;
 
 
 
------------------------
+select distinct (concat(LPAD(hb.arrival_date_month, 3, '0')))
+from hotel_bookings hb;
 
+SELECT 
+	CONCAT(
+        LPAD(hb.arrival_date_day_of_month, 2, '0'), '-', 
+        hb.arrival_date_month, '-',
+        RIGHT(hb.arrival_date_year, 2)
+    ) AS date_of_arrival,
+    hb.arrival_date_week_number as minggu_ke,
+    hb.stays_in_weekend_nights,
+    hb.stays_in_week_nights,
+    hb.reservation_status_date,
+    hb.lead_time,
+    DATE_SUB(
+        STR_TO_DATE(
+            CONCAT(
+                hb.arrival_date_year, '-', 
+                hb.arrival_date_month, '-', 
+                LPAD(hb.arrival_date_day_of_month, 2, '0')
+            ), 
+            '%Y-%M-%d'
+        ), 
+        INTERVAL hb.lead_time DAY
+    ) AS booking_date,
+    hb.reservation_status,
+    hb.market_segment
+FROM 
+    hotel_bookings hb
+where hb.reservation_status = "Canceled";
+
+--- tabel end
+
+select 
+	CONCAT(
+        LPAD(hb.arrival_date_day_of_month, 2, '0'), '-', 
+        hb.arrival_date_month, '-',
+        RIGHT(hb.arrival_date_year, 2)
+    ) AS date_of_arrival,
+from hotel_bookings hb
+where hb.reservation_status = "Check-Out" and arrival_date_month = "July" and arrival_date_year = "2015";
+
+
+SELECT 
+    CONCAT(
+        LPAD(hb.arrival_date_day_of_month, 2, '0'), '-', 
+        hb.arrival_date_month, '-',
+        RIGHT(hb.arrival_date_year, 2)
+    ) AS date_of_arrival,
+    DAYNAME(
+        STR_TO_DATE(
+            CONCAT(
+                hb.arrival_date_year, '-', 
+                hb.arrival_date_month, '-',
+                hb.arrival_date_day_of_month
+            ),
+            '%Y-%M-%d'
+        )
+    ) AS day_of_week
+FROM 
+    hotel_bookings hb
+WHERE 
+    hb.reservation_status = "Check-Out" AND 
+    hb.arrival_date_month = "July" AND 
+    hb.arrival_date_year = "2015";
+   
+SELECT 
+    CONCAT(
+        LPAD(hb.arrival_date_day_of_month, 2, '0'), '-', 
+        hb.arrival_date_month, '-',
+        RIGHT(hb.arrival_date_year, 2)
+    ) AS date_of_arrival,
+    DAYNAME(
+        STR_TO_DATE(
+            CONCAT(
+                hb.arrival_date_year, '-', 
+                hb.arrival_date_month, '-',
+                hb.arrival_date_day_of_month
+            ),
+            '%Y-%M-%d'
+        )
+    ) AS day_of_week
+FROM 
+    hotel_bookings hb
+WHERE 
+    hb.reservation_status = "Check-Out" AND 
+    hb.arrival_date_month = "January" AND 
+    hb.arrival_date_year = "2017";
+   
+SELECT 
+    DAYNAME(
+        STR_TO_DATE(
+            CONCAT(
+                hb.arrival_date_year, '-', 
+                hb.arrival_date_month, '-', 
+                hb.arrival_date_day_of_month
+            ),
+            '%Y-%M-%d'
+        )
+    ) AS day_of_week,
+    COUNT(*) AS count
+FROM 
+    hotel_bookings hb
+WHERE 
+    hb.reservation_status = "Check-Out" AND 
+    hb.arrival_date_month = "January" AND 
+    hb.arrival_date_year = "2017"
+GROUP BY 
+    day_of_week;
+
+SELECT 
+    DAYNAME(
+        STR_TO_DATE(
+            CONCAT(
+                hb.arrival_date_year, '-', 
+                hb.arrival_date_month, '-', 
+                hb.arrival_date_day_of_month
+            ),
+            '%Y-%M-%d'
+        )
+    ) AS day_of_week,
+    COUNT(*) AS count
+FROM 
+    hotel_bookings hb
+WHERE 
+    hb.reservation_status = "Check-Out" AND 
+    hb.arrival_date_month = "January" AND 
+    hb.arrival_date_year = "2017" 
+GROUP BY 
+    day_of_week;
+
+
+   
+---
+SELECT 
+    DAYNAME(
+        STR_TO_DATE(
+            CONCAT(
+                hb.arrival_date_year, '-', 
+                hb.arrival_date_month, '-', 
+                hb.arrival_date_day_of_month
+            ),
+            '%Y-%M-%d'
+        )
+    ) AS day_of_week,
+    COUNT(*) AS count
+FROM 
+    hotel_bookings hb
+WHERE 
+    hb.reservation_status = "Check-Out" AND 
+    hb.arrival_date_month = "January" AND 
+    hb.arrival_date_year = "2017" AND 
+    DAYNAME(
+        STR_TO_DATE(
+            CONCAT(
+                hb.arrival_date_year, '-', 
+                hb.arrival_date_month, '-', 
+                hb.arrival_date_day_of_month
+            ),
+            '%Y-%M-%d'
+        )
+    ) = 'Wednesday'
+GROUP BY 
+    day_of_week;
+
+--------------
+
+select
+	hb.arrival_date_week_number as minggu_ke,
+    DAYNAME(
+        STR_TO_DATE(
+            CONCAT(
+                hb.arrival_date_year, '-', 
+                hb.arrival_date_month, '-', 
+                hb.arrival_date_day_of_month
+            ),
+            '%Y-%M-%d'
+        )
+    ) AS day_of_week,
+    COUNT(*) AS count
+FROM 
+    hotel_bookings hb
+WHERE 
+    hb.reservation_status = "Check-Out" and arrival_date_year = "2017"
+GROUP BY 
+    minggu_ke, day_of_week
+order by minggu_ke asc;
+
+
+--------
 
 SELECT 
     hb.arrival_date_week_number AS week,
@@ -457,7 +704,9 @@ GROUP BY
     hb.arrival_date_week_number
 ORDER BY 
     hb.arrival_date_week_number ASC;
-   
+ 
+create table sementara
+as (
 SELECT 
     hb.arrival_date_week_number AS week,
     hb.arrival_date_month as bulan,
@@ -472,11 +721,14 @@ FROM
     hotel_bookings hb
 WHERE 
     hb.reservation_status = "Check-Out" AND 
-    hb.arrival_date_year = "2017"
+    hb.arrival_date_year = "2017" and 
+    hb.arrival_date_month = "January"
 GROUP BY 
     hb.arrival_date_week_number, bulan
 ORDER BY 
-    hb.arrival_date_week_number ASC;
+    hb.arrival_date_week_number ASC);
+
+
    
    
 SELECT 
@@ -557,3 +809,53 @@ GROUP BY
     hb.arrival_date_week_number, bulan
 ORDER BY 
     hb.arrival_date_week_number ASC;
+
+   
+--- bikin query baru pakai union untuk semua tabel sementara berdasarkan bulan untuk menjadi 1. 
+
+create table february
+as (
+SELECT 
+    hb.arrival_date_week_number AS week,
+    hb.arrival_date_month as bulan,
+    SUM(CASE WHEN DAYNAME(STR_TO_DATE(CONCAT(hb.arrival_date_year, '-', hb.arrival_date_month, '-', hb.arrival_date_day_of_month), '%Y-%M-%d')) = 'Monday' THEN 1 ELSE 0 END) AS Monday,
+    SUM(CASE WHEN DAYNAME(STR_TO_DATE(CONCAT(hb.arrival_date_year, '-', hb.arrival_date_month, '-', hb.arrival_date_day_of_month), '%Y-%M-%d')) = 'Tuesday' THEN 1 ELSE 0 END) AS Tuesday,
+    SUM(CASE WHEN DAYNAME(STR_TO_DATE(CONCAT(hb.arrival_date_year, '-', hb.arrival_date_month, '-', hb.arrival_date_day_of_month), '%Y-%M-%d')) = 'Wednesday' THEN 1 ELSE 0 END) AS Wednesday,
+    SUM(CASE WHEN DAYNAME(STR_TO_DATE(CONCAT(hb.arrival_date_year, '-', hb.arrival_date_month, '-', hb.arrival_date_day_of_month), '%Y-%M-%d')) = 'Thursday' THEN 1 ELSE 0 END) AS Thursday,
+    SUM(CASE WHEN DAYNAME(STR_TO_DATE(CONCAT(hb.arrival_date_year, '-', hb.arrival_date_month, '-', hb.arrival_date_day_of_month), '%Y-%M-%d')) = 'Friday' THEN 1 ELSE 0 END) AS Friday,
+    SUM(CASE WHEN DAYNAME(STR_TO_DATE(CONCAT(hb.arrival_date_year, '-', hb.arrival_date_month, '-', hb.arrival_date_day_of_month), '%Y-%M-%d')) = 'Saturday' THEN 1 ELSE 0 END) AS Saturday,
+    SUM(CASE WHEN DAYNAME(STR_TO_DATE(CONCAT(hb.arrival_date_year, '-', hb.arrival_date_month, '-', hb.arrival_date_day_of_month), '%Y-%M-%d')) = 'Sunday' THEN 1 ELSE 0 END) AS Sunday
+FROM 
+    hotel_bookings hb
+WHERE 
+    hb.reservation_status = "Check-Out" AND 
+    hb.arrival_date_year = "2017" and 
+    hb.arrival_date_month = "February"
+GROUP BY 
+    hb.arrival_date_week_number, bulan
+ORDER BY 
+    hb.arrival_date_week_number ASC);
+
+create table hasil_akhir
+as (
+SELECT 
+--     hb.arrival_date_week_number AS week,
+    row_number() over (partition by hb.arrival_date_month order by hb.arrival_date_week_number asc) week,
+    hb.arrival_date_month as bulan,
+    SUM(CASE WHEN DAYNAME(STR_TO_DATE(CONCAT(hb.arrival_date_year, '-', hb.arrival_date_month, '-', hb.arrival_date_day_of_month), '%Y-%M-%d')) = 'Monday' THEN 1 ELSE 0 END) AS Monday,
+    SUM(CASE WHEN DAYNAME(STR_TO_DATE(CONCAT(hb.arrival_date_year, '-', hb.arrival_date_month, '-', hb.arrival_date_day_of_month), '%Y-%M-%d')) = 'Tuesday' THEN 1 ELSE 0 END) AS Tuesday,
+    SUM(CASE WHEN DAYNAME(STR_TO_DATE(CONCAT(hb.arrival_date_year, '-', hb.arrival_date_month, '-', hb.arrival_date_day_of_month), '%Y-%M-%d')) = 'Wednesday' THEN 1 ELSE 0 END) AS Wednesday,
+    SUM(CASE WHEN DAYNAME(STR_TO_DATE(CONCAT(hb.arrival_date_year, '-', hb.arrival_date_month, '-', hb.arrival_date_day_of_month), '%Y-%M-%d')) = 'Thursday' THEN 1 ELSE 0 END) AS Thursday,
+    SUM(CASE WHEN DAYNAME(STR_TO_DATE(CONCAT(hb.arrival_date_year, '-', hb.arrival_date_month, '-', hb.arrival_date_day_of_month), '%Y-%M-%d')) = 'Friday' THEN 1 ELSE 0 END) AS Friday,
+    SUM(CASE WHEN DAYNAME(STR_TO_DATE(CONCAT(hb.arrival_date_year, '-', hb.arrival_date_month, '-', hb.arrival_date_day_of_month), '%Y-%M-%d')) = 'Saturday' THEN 1 ELSE 0 END) AS Saturday,
+    SUM(CASE WHEN DAYNAME(STR_TO_DATE(CONCAT(hb.arrival_date_year, '-', hb.arrival_date_month, '-', hb.arrival_date_day_of_month), '%Y-%M-%d')) = 'Sunday' THEN 1 ELSE 0 END) AS Sunday
+FROM 
+    hotel_bookings hb
+WHERE 
+    hb.reservation_status = "Check-Out" AND 
+    hb.arrival_date_year = "2017"
+GROUP BY 
+    hb.arrival_date_week_number, bulan
+ORDER BY 2, 1 asc);
+
+   
