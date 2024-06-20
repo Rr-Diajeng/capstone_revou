@@ -136,6 +136,7 @@ from city_hotel_checkin chc
 where chc.arrival_date_year = 2016 and chc.arrival_date_month = 'September'
 group by chc.country
 order by jumlah desc
+limit 5;
 
 
 -- 9. mencari top distribution channel based on country pada september 2016
@@ -147,6 +148,7 @@ from city_hotel_checkin chc
 where chc.arrival_date_year = 2016 and chc.arrival_date_month = 'September'
 group by chc.country, chc.distribution_channel 
 order by jumlah desc
+limit 5;
 
 -- 10. mencari top meal based on country and customer type pada september 2016
 
@@ -156,3 +158,4 @@ from city_hotel_checkin chc
 where chc.arrival_date_year = 2016 and chc.arrival_date_month = 'September'
 group by chc.country, chc.customer_type, chc.meal
 order by jumlah desc
+limit 5;
